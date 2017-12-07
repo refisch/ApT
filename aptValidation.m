@@ -16,7 +16,7 @@ if(~exist('numberSamples','var') || isempty(numberSamples))
     numberSamples = 1000;
 end
 
-if(~exist('mode','var') || isempty(modeSeqGen))
+if(~exist('modeSeqGen','var') || isempty(modeSeqGen))
     modeSeqGen = 'random';
 end
 
