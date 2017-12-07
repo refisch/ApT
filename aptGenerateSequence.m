@@ -47,7 +47,7 @@ switch mode
         % Aim: Find sequence that minimizes distance to other sequences by random perturbations.
         for iPerm = 1:5000 % 10000 perturbations = 20s
             PertSeq = minSeq;
-            PertSeq(ceil(rand(1)*15)) = W{1}(ceil(rand(1)*4));
+            PertSeq(ceil(rand(1)*minLen)) = W{1}(ceil(rand(1)*4));
             currDist = aptCalcStringDistance(PertSeq,sequence);
             [totDist, minidx] = min([totDist currDist]);
             if minidx == 2
