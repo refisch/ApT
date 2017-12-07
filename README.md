@@ -1,4 +1,3 @@
 # ApT
-For statistically analyzing aptamere sequences.
-
-If you have any questions or want to contribute, write an email to: lukas.refisch -ät- posteo.de
+For statistical analyses of aptamere sequences.
+So far, basic functionality with read in of data, lasso analysis of predictive properties of sequences for binding rates.
