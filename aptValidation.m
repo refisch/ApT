@@ -26,7 +26,7 @@ vali.number = numberSamples;
 vali.beta = stats.beta(:,validationIndex);
 vali.intercept = stats.Intercept(validationIndex);
 vali.PredictorNames = stats.PredictorNames;
-
+vali.mode = modeSeqGen;
 vali.sequence = aptGenerateSequence(sequence,vali.number,modeSeqGen);
 
 [X, valiNames] = aptPredictors(vali.sequence);

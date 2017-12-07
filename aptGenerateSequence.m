@@ -16,10 +16,8 @@ end
 
 if(~exist('mode','var') || isempty(mode))
     mode = 'random';
-else
-    if ~(strcmp(mode,'random') || strcmp(mode,'mutated'))
-        error('I do not know this mode of creating new sequences.')
-    end
+elseif ~(strcmp(mode,'random') || strcmp(mode,'mutated'))
+    error('I do not know this mode of creating new sequences.')
 end
 
 % For this task only use 95% of longest sequences thus having longer test
