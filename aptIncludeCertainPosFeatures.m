@@ -1,6 +1,7 @@
 function [predX,predNames] = aptIncludeCertainPosFeatures(predCertainPosFeatures,sequence,predX,predNames)
-%APTINCLUDECERTAINPOSFEATURES Summary of this function goes here
-%   Detailed explanation goes here
+%APTINCLUDECERTAINPOSFEATURES Looks for a distinct Pattern at a certain
+%Position and extends design matrix.
+%
 
 if nargin ~= 4
     error('function needs 4 input arguments')
