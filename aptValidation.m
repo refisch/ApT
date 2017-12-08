@@ -25,18 +25,16 @@ validationIndex = stats.Index1SE;
 vali.number = numberSamples;
 vali.beta = stats.beta(:,validationIndex);
 vali.intercept = stats.Intercept(validationIndex);
-vali.PredictorNames = stats.PredictorNames;
 vali.mode = modeSeqGen;
 vali.sequence = aptGenerateSequence(sequence,vali.number,modeSeqGen);
 
-[X, valiNames] = aptPredictors(vali.sequence);
+[X, vali.PredictorNames] = aptPredictors(vali.sequence);
 
-if sum(cellfun(@strcmp,valiNames, predNames)) ~= length(valiNames)
+if sum(cellfun(@strcmp,vali.PredictorNames, predNames)) ~= length(vali.PredictorNames)
     error('validation predictors do not match calibrated predictors!')
 end
 
 vali.EstRates = vali.intercept + X'*vali.beta;
-
 
 end
 
