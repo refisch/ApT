@@ -10,16 +10,15 @@ predLengthTail = 'all'; % explicit forms in cell array, empty ({}) or 'all' -- c
 predSingles = 'all'; % explicit forms, empty ({}) or 'all'
 predDimers = 'all';%'all'; % explicit forms, empty ({}) or 'all'
 predCodons = 'all';%'all'; % explicit forms, empty ({}) or 'all'
-predNMers = {'TATA'}; % explicit forms or empty
-predRegExp = {'GG[ACT]{2}GG','GG[ACT]{3}GG'};
-predInteractionTerms = {'Single_G*Single_C'};
+predNMers = '';%{'TATA'}; % explicit forms or empty
+predRegExp = {'GG[ACT]{1}GG','GG[ACT]{2}GG','GG[ACT]{3}GG','GG[ACT]{4}GG'};
+predInteractionTerms = '';%{'Single_G*Single_C'};
 
-predCertainPosFeatures.pattern = {'G','T','G','T','G','G','T','T'};
-predCertainPosFeatures.position = [1,2,6,7,8,14,19,20];
+predCertainPosFeatures.position = 1:15; % this is not done dynamically, because in validation sequences length might differ.
+predCertainPosFeatures.pattern = {'G','G','T','T','G','G','T','G','T','G','G','T','T','G','G'};
 
 % Symmetrien, Spiegelungen,.... G->C
-% nmercount, look up symmteric one from the other side.
-% Muster wie GG-GG-----GG-GG ??
+% nmercount, look up symmetric one from the other side.
 
 %% Calculate design matrix X
 predNames = {};
