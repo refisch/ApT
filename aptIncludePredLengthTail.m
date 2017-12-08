@@ -27,7 +27,7 @@ for iseq = 1:length(sequence)
     end
 end
 for i = 1:length(predLengthTail)
-    predNames{end+1} = ['Length_Tail_' predLengthTail{i}];
+    predNames{end+1} = ['Length_Spacer_' predLengthTail{i}];
 end
 
 predX = [predX; XlengthSeq'];
