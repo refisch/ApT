@@ -1,4 +1,4 @@
-function [sequence,Y,weightsY,doLog10] = aptPreprocessData(sequence,Y)
+function [sequence,Y,weightsY,doLog10] = aptPreprocessData(sequence,Y,doLog10Extern)
 %APTPREPROCESSDATA Does the preprocessing of the sequence data.
 %   Often multiple measurements to one sequence are performed. Her mean and
 %   weights calculation for regression model.
@@ -12,10 +12,14 @@ for iGroups = 1:length(uniSequence)
     stdyPP(iGroups) = std(Y(idxSeq==iGroups));
 end
 
-doLog10 = false;
-[~,pVal] = corr(yPP',stdyPP');
-if pVal < 0.01
-    doLog10 = true;
+if exist('doLog10Extern','var')
+    doLog10 = doLog10Extern;
+else
+    doLog10 = false;
+    [~,pVal] = corr(yPP',stdyPP');
+    if pVal < 0.01
+        doLog10 = true;
+    end
 end
 
 if doLog10
