@@ -13,18 +13,20 @@ seqlogo(sequence)
 
 if stats.doLog10
     figure
+    subplot(2,1,1)
     histogram(Y)
     title('Histogram of log10 of means of MaxIncrease')
     
-    figure
+    subplot(2,1,2)
     histogram(1./weightsY)
     title('Histogram of standard errors (log10) calculated from replicates')
 else
     figure
+    subplot(2,1,1)
     histogram(Y,0:50:1100)
     title('Histogram of means of MaxIncrease')
     
-    figure
+    subplot(2,1,2)
     histogram(1./weightsY,0:20:300)
     title('Histogram of standard errors calculated from replicates')
 end
