@@ -4,10 +4,21 @@ function aptReadSequenceData(filename)
 
 global apt
 
-[apt.header, data, dataCell] = aptReadCSVHeaderFile(filename, ',', true);
-apt.sequence = strrep(dataCell(:,1),'_x000D_','');
-apt.Y = data(:,2);
+if ~isfield(apt,'data')
+    id = 1;
+else
+    id = length(apt.data) + 1;
+end
 
+[header, data, dataCell] = aptReadCSVHeaderFile(filename, ',', true);
+isSequence = strcmp(header,{'Sequence'});
+isMaxIncrease = strcmp(header,{'MaxIncrease'});
+
+apt.data(id).sequence = strrep(dataCell(:,isSequence),'_x000D_','');
+apt.data(id).Y = data(:,isMaxIncrease);
+apt.data(id).array = id; % default behavior
+apt.data(id).conc = nan;
+apt.data(id).filename = filename;
 
 end
 
