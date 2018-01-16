@@ -1,31 +1,28 @@
-function [predX,predNames] = aptIncludePredInteractionTerms(predInteraction,sequence,predX,predNames)
-%APTINCLUDEPREDINTERACTIONTERMS Summary of this function goes here
-%   Detailed explanation goes here
+function [predX,predNames] = aptIncludePredInteractionTerms
+% apt.predInteraction contains a string of TERM1*TERM2 with TERM1 and TERM2
+% existing predictors.
 
+global apt
 
-if nargin ~= 4
-    error('function needs 4 input arguments')
-end
-
-if isempty(predInteraction)
+if ~isfield(apt,'predInteraction')
     return
 end
 
-for iInteraction = 1:length(predInteraction)
-    intTerms = strsplit(predInteraction{iInteraction},'*');
-    idx1 = find(~cellfun(@isempty,regexp(predNames,['\_' intTerms{1} '$'])));
-    idx2 = find(~cellfun(@isempty,regexp(predNames,['\_' intTerms{2} '$'])));
+for iInteraction = 1:length(apt.predInteraction)
+    intTerms = strsplit(apt.predInteraction{iInteraction},'*');
+    idx1 = find(~cellfun(@isempty,regexp(apt.predNames,['\_' intTerms{1} '$'])));
+    idx2 = find(~cellfun(@isempty,regexp(apt.predNames,['\_' intTerms{2} '$'])));
     if length(idx1)~= 1 || length(idx2)~= 1
         error('Interaction terms are ambiguous!')
     end
-    XInteraction(:,iInteraction) = predX(idx1,:).*predX(idx2,:);
+    XInteraction(:,iInteraction) = apt.predX(idx1,:).*apt.predX(idx2,:);
 end
 
-for iInteraction = 1:length(predInteraction)
-    predNames{end+1} = ['Interaction_' predInteraction{iInteraction}];
+for iInteraction = 1:length(apt.predInteraction)
+    apt.predNames{end+1} = ['Interaction_' apt.predInteraction{iInteraction}];
 end
 
-predX = [predX; XInteraction'];
+apt.predX = [apt.predX; XInteraction'];
 
 
 end

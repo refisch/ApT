@@ -1,28 +1,26 @@
-function [predX,predNames] = aptIncludeCertainPosFeatures(predCertainPosFeatures,sequence,predX,predNames)
+function [predX,predNames] = aptIncludeCertainPosFeatures
 %APTINCLUDECERTAINPOSFEATURES Looks for a distinct Pattern at a certain
 %Position and extends design matrix.
 %
 
-if nargin ~= 4
-    error('function needs 4 input arguments')
-end
+global apt
 
-if isempty(predCertainPosFeatures)
+if ~isfield(apt,'predCertainPosFeatures')
     return
 end
 
-position = predCertainPosFeatures.position;
-pattern = predCertainPosFeatures.pattern;
+position = apt.predCertainPosFeatures.position;
+pattern = apt.predCertainPosFeatures.pattern;
 
 if length(pattern) ~= length(position)
     error('patterns have to start at position. they need the same length!')
 end
 
-Xcpf = zeros(length(sequence), length(position));
+Xcpf = zeros(length(apt.sequence), length(position));
 
-for iseq = 1:length(sequence)
+for iseq = 1:length(apt.sequence)
     for iPattern = 1:length(pattern)
-        [startIndex,~] = regexp(sequence{iseq},pattern{iPattern});
+        [startIndex,~] = regexp(apt.sequence{iseq},pattern{iPattern});
         if sum(startIndex == position(iPattern)) == 1
             Xcpf(iseq,iPattern) = 1;
         end
@@ -30,9 +28,9 @@ for iseq = 1:length(sequence)
 end
 
 for iPattern = 1:length(pattern)
-    predNames{end+1} = ['Pattern_' pattern{iPattern} '_atPosition_' int2str(position(iPattern))];
+    apt.predNames{end+1} = ['Pattern_' pattern{iPattern} '_atPosition_' int2str(position(iPattern))];
 end
 
-predX = [predX; Xcpf'];
+apt.predX = [apt.predX; Xcpf'];
 end
 

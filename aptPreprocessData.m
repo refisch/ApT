@@ -1,34 +1,36 @@
-function [sequence,Y,weightsY,doLog10] = aptPreprocessData(sequence,Y,doLog10Extern)
+function [sequence,Y,weightsY,doLog10] = aptPreprocessData
 %APTPREPROCESSDATA Does the preprocessing of the sequence data.
 %   Often multiple measurements to one sequence are performed. Her mean and
 %   weights calculation for regression model.
 
-[uniSequence,~,idxSeq] = unique(sequence);
+global apt
+
+[uniSequence,~,idxSeq] = unique(apt.sequence);
 yPP = zeros(1,length(uniSequence));
-stdyPP = yPP;
+stdyPP = zeros(1,length(uniSequence));
 
 for iGroups = 1:length(uniSequence)
-    yPP(iGroups) = mean(Y(idxSeq==iGroups));
-    stdyPP(iGroups) = std(Y(idxSeq==iGroups));
+    yPP(iGroups) = mean(apt.Y(idxSeq==iGroups));
+    stdyPP(iGroups) = std(apt.Y(idxSeq==iGroups));
 end
 
-if exist('doLog10Extern','var')
-    doLog10 = doLog10Extern;
+if isfield(apt, 'doLog10Extern')
+    apt.doLog10 = apt.doLog10Extern;
 else
-    doLog10 = false;
+    apt.doLog10 = false;
     [~,pVal] = corr(yPP',stdyPP');
     if pVal < 0.01
-        doLog10 = true;
+        apt.doLog10 = true;
     end
 end
 
-if doLog10
-    if min(Y)<0
-        Y = Y+abs(min(Y))+1;
+if apt.doLog10
+    if min(apt.Y)<0
+        apt.Y = apt.Y+abs(min(apt.Y))+1;
     end
     for iGroups = 1:length(uniSequence)
-        yPP(iGroups) = mean(log10(Y(idxSeq==iGroups)));
-        stdyPP(iGroups) = std(log10(Y(idxSeq==iGroups)));
+        yPP(iGroups) = mean(log10(apt.Y(idxSeq==iGroups)));
+        stdyPP(iGroups) = std(log10(apt.Y(idxSeq==iGroups)));
     end
     [Rho,pVal] = corr(yPP',stdyPP');
     if pVal<0.01
@@ -37,9 +39,9 @@ if doLog10
     end
 end
 
-sequence = uniSequence;
-Y = yPP;
-weightsY = 1./stdyPP;
+apt.sequence = uniSequence;
+apt.Y = yPP;
+apt.weightsY = 1./stdyPP;
 
 end
 

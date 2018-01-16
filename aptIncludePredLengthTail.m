@@ -1,4 +1,4 @@
-function [predX,predNames] = aptIncludePredLengthTail(predLengthTail,sequence,predX,predNames)
+function [predX,predNames] = aptIncludePredLengthTail
 %aptIncludePredLengthTail Will alter the predictor's matrix and names
 %vector in such a way, that number of repititions of last sequence letter
 %are accounted for.
@@ -7,30 +7,29 @@ function [predX,predNames] = aptIncludePredLengthTail(predLengthTail,sequence,pr
 % predX is predictor matrix X
 % predNames is cell array of predictor names
 
-if nargin ~= 4
-    error('function needs 4 input arguments')
-end
+global apt
 
-if isempty(predLengthTail)
+if ~isfield(apt,'predLengthTail')
     return
 end
 
-if predLengthTail == 'all'
+if apt.predLengthTail == 'all'
     structBC = basecount('A');
     predLengthTail = fieldnames(structBC);
+% else?? -ToDo
 end
 
-for iseq = 1:length(sequence)
+for iseq = 1:length(apt.sequence)
     for iLetter = 1:length(predLengthTail)
-        idxNotLastLetter = regexp(sequence{iseq},['[^' predLengthTail{iLetter} ']']);
-        XlengthSeq(iseq,iLetter) = length(sequence{iseq}) - max(idxNotLastLetter);
+        idxNotLastLetter = regexp(apt.sequence{iseq},['[^' predLengthTail{iLetter} ']']);
+        XlengthSeq(iseq,iLetter) = length(apt.sequence{iseq}) - max(idxNotLastLetter);
     end
 end
 for i = 1:length(predLengthTail)
-    predNames{end+1} = ['Length_Spacer_' predLengthTail{i}];
+    apt.predNames{end+1} = ['Length_Spacer_' predLengthTail{i}];
 end
 
-predX = [predX; XlengthSeq'];
+apt.predX = [apt.predX; XlengthSeq'];
 
 end
 

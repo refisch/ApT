@@ -1,29 +1,28 @@
-function [predX,predNames] = aptIncludeRegExp(predRegExp,sequence,predX,predNames)
+function [predX,predNames] = aptIncludeRegExp
 %APTINCLUDEREGEXP Summary of this function goes here
 %   Detailed explanation goes here
-if nargin ~= 4
-    error('function needs 4 input arguments')
-end
 
-if isempty(predRegExp)
+global apt
+
+if ~isfield(apt,'predRegExp')
     return
 end
 
-Xregexp = zeros(length(sequence), length(predRegExp));
+Xregexp = zeros(length(apt.sequence), length(apt.predRegExp));
 
-for iseq = 1:length(sequence)
-    for iPattern = 1:length(predRegExp)
-        startIndex = regexp(sequence{iseq},predRegExp{iPattern});
+for iseq = 1:length(apt.sequence)
+    for iPattern = 1:length(apt.predRegExp)
+        startIndex = regexp(apt.sequence{iseq},apt.predRegExp{iPattern});
         if ~isempty(startIndex)
             Xregexp(iseq,iPattern) = length(startIndex);
         end
     end
 end
 
-for iPattern = 1:length(predRegExp)
-    predNames{end+1} = ['RegExp_' predRegExp{iPattern}];
+for iPattern = 1:length(apt.predRegExp)
+    apt.predNames{end+1} = ['RegExp_' apt.predRegExp{iPattern}];
 end
 
-predX = [predX; Xregexp'];
+apt.predX = [apt.predX; Xregexp'];
 end
 

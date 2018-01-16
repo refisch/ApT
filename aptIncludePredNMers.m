@@ -1,4 +1,4 @@
-function [predX,predNames] = aptIncludePredNMers(predNMers,sequence,predX,predNames)
+function [predX,predNames] = aptIncludePredNMers
 %aptIncludePredNMers will alter the predictor's matrix and names
 %vector in such a way, that number of n-mer counts are accounted for.
 % predNMers is cell array of n-mers ATATA,GCGCGT,... Length can vary.
@@ -6,24 +6,22 @@ function [predX,predNames] = aptIncludePredNMers(predNMers,sequence,predX,predNa
 % predX is predictor matrix X
 % predNames is cell array of predictor names
 
-if nargin ~= 4
-    error('function needs 4 input arguments')
-end
+global apt
 
-if isempty(predNMers)
+if (~isfield(apt,'predNMers')||isempty(apt.predNMers))
     return
 end
 
-for iseq = 1:length(sequence)
-    for iLetter = 1:length(predNMers)
-        FindNMer = regexp(sequence{iseq},predNMers{iLetter});
-        XbasecountSeq(iseq,iLetter) = length(FindNMer) - sum(diff(FindNMer)<length(predNMers{iLetter}));
+for iseq = 1:length(apt.sequence)
+    for iLetter = 1:length(apt.predNMers)
+        FindNMer = regexp(apt.sequence{iseq},apt.predNMers{iLetter});
+        XbasecountSeq(iseq,iLetter) = length(FindNMer) - sum(diff(FindNMer)<length(apt.predNMers{iLetter}));
     end
 end
-for i = 1:length(predNMers)
-    predNames{end+1} = ['Count_NMer_' predNMers{i}];
+for i = 1:length(apt.predNMers)
+    apt.predNames{end+1} = ['Count_NMer_' apt.predNMers{i}];
 end
 
-predX = [predX; XbasecountSeq'];
+apt.predX = [apt.predX; XbasecountSeq'];
 end
 
