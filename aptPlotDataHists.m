@@ -3,6 +3,20 @@ function aptPlotDataHists
 %   Detailed explanation goes here
 global apt
 
+minVal = [];
+maxVal = [];
+for id = 1:length(apt.data)
+    minVal = min([minVal;apt.data(id).Y]);
+    maxVal = max([maxVal;apt.data(id).Y]);
+end
+myEdges = minVal:(maxVal-minVal)/20:maxVal;
+figure
+for id = 1:length(apt.data)
+    subplot(length(apt.data),1,id)
+    histogram(apt.data(id).Y,'BinEdges',myEdges)
+    title(sprintf('dataset number %d',id))
+end
+
 if apt.stats.doLog10
     figure
     subplot(2,1,1)

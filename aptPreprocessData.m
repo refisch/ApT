@@ -1,9 +1,13 @@
-function [sequence,Y,weightsY,doLog10] = aptPreprocessData
+function [sequence,Y,weightsY,doLog10] = aptPreprocessData(offset_logScale)
 %APTPREPROCESSDATA Does the preprocessing of the sequence data.
 %   Often multiple measurements to one sequence are performed. Her mean and
 %   weights calculation for regression model.
 
 global apt
+
+if ~exist('offset_logScale','var')
+    offset_logScale = 8;
+end
 
 if ~isfield(apt,'sequence')
     apt.sequence = {};
@@ -15,6 +19,9 @@ end
 
 for id = 1:length(apt.data)
     [uniSequence,~,idxSeq] = unique(apt.data(id).sequence);
+    if isempty(apt.data(id).sequence)
+        continue
+    end
     Y = apt.data(id).Y;
     yPP = zeros(1,length(uniSequence));
     stdyPP = zeros(1,length(uniSequence));
@@ -31,7 +38,7 @@ for id = 1:length(apt.data)
     
     if apt.doLog10
         if min(Y)<0
-            Y = Y+abs(min(Y))+1;
+            Y = Y+abs(min(Y))+offset_logScale;
         end
         for iGroups = 1:length(uniSequence)
             yPP(iGroups) = mean(log10(Y(idxSeq==iGroups)));

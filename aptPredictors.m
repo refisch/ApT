@@ -7,7 +7,7 @@ function aptPredictors
 global apt
 
 %% Define Predictors
-apt.predExpCond = true;
+apt.predExpCond = length(apt.data) > 1;
 apt.predLength = true; % true or false
 apt.predLengthTail = 'all'; % explicit forms in cell array, empty ({}) or 'all' -- count number of same nucleobases at the end.
 apt.predSingles = 'all'; % explicit forms, empty ({}) or 'all'
