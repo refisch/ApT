@@ -4,8 +4,8 @@ function aptIncludeExperimentalConditions
 
 global apt
 
-if isfield(apt,'predExpCond')
-    if apt.predExpCond
+if isfield(apt.pred,'ExpCond')
+    if apt.pred.ExpCond
         conc = [];
         array = [];
         for id = 1:length(apt.data)

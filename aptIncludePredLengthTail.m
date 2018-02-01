@@ -9,11 +9,11 @@ function [predX,predNames] = aptIncludePredLengthTail
 
 global apt
 
-if ~isfield(apt,'predLengthTail')
+if ~isfield(apt.pred,'LengthTail')
     return
 end
 
-if apt.predLengthTail == 'all'
+if apt.pred.LengthTail == 'all'
     structBC = basecount('A');
     predLengthTail = fieldnames(structBC);
 % else?? -ToDo

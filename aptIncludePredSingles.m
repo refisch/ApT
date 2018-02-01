@@ -7,23 +7,23 @@ function [predX,predNames] = aptIncludePredSingles
 % predNames is cell array of predictor names
 global apt
 
-if ~isfield(apt,'predSingles')
+if ~isfield(apt.pred,'Singles')
     return
 end
 
-if apt.predSingles == 'all'
+if apt.pred.Singles == 'all'
     structBC = basecount('A');
-    apt.predSingles = fieldnames(structBC);
+    apt.pred.Singles = fieldnames(structBC);
 end
 
 for iseq = 1:length(apt.sequence)
     structBC = basecount(apt.sequence{iseq});
-    for iLetter = 1:length(apt.predSingles)
-        XbasecountSeq(iseq,iLetter) = structBC.(apt.predSingles{iLetter});
+    for iLetter = 1:length(apt.pred.Singles)
+        XbasecountSeq(iseq,iLetter) = structBC.(apt.pred.Singles{iLetter});
     end
 end
-for i = 1:length(apt.predSingles)
-    apt.predNames{end+1} = ['Count_Single_' apt.predSingles{i}];
+for i = 1:length(apt.pred.Singles)
+    apt.predNames{end+1} = ['Count_Single_' apt.pred.Singles{i}];
 end
 
 apt.predX = [apt.predX; XbasecountSeq'];

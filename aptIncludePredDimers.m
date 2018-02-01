@@ -8,23 +8,23 @@ function [predX,predNames] = aptIncludePredDimers
 
 global apt
 
-if ~isfield(apt,'predDimers')
+if ~isfield(apt.pred,'Dimers')
     return
 end
 
-if apt.predDimers == 'all'
+if apt.pred.Dimers == 'all'
     structBC = dimercount('A');
-    apt.predDimers = fieldnames(structBC);
+    apt.pred.Dimers = fieldnames(structBC);
 end
 
 for iseq = 1:length(apt.sequence)
     structBC = dimercount(apt.sequence{iseq});
-    for iLetter = 1:length(apt.predDimers)
-        XbasecountSeq(iseq,iLetter) = structBC.(apt.predDimers{iLetter});
+    for iLetter = 1:length(apt.pred.Dimers)
+        XbasecountSeq(iseq,iLetter) = structBC.(apt.pred.Dimers{iLetter});
     end
 end
-for i = 1:length(apt.predDimers)
-    apt.predNames{end+1} = ['Count_Dimer_' apt.predDimers{i}];
+for i = 1:length(apt.pred.Dimers)
+    apt.predNames{end+1} = ['Count_Dimer_' apt.pred.Dimers{i}];
 end
 
 apt.predX = [apt.predX; XbasecountSeq'];

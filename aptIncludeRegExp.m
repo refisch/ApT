@@ -4,23 +4,23 @@ function [predX,predNames] = aptIncludeRegExp
 
 global apt
 
-if ~isfield(apt,'predRegExp')
+if ~isfield(apt.pred,'RegExp')
     return
 end
 
-Xregexp = zeros(length(apt.sequence), length(apt.predRegExp));
+Xregexp = zeros(length(apt.sequence), length(apt.pred.RegExp));
 
 for iseq = 1:length(apt.sequence)
-    for iPattern = 1:length(apt.predRegExp)
-        startIndex = regexp(apt.sequence{iseq},apt.predRegExp{iPattern});
+    for iPattern = 1:length(apt.pred.RegExp)
+        startIndex = regexp(apt.sequence{iseq},apt.pred.RegExp{iPattern});
         if ~isempty(startIndex)
             Xregexp(iseq,iPattern) = length(startIndex);
         end
     end
 end
 
-for iPattern = 1:length(apt.predRegExp)
-    apt.predNames{end+1} = ['RegExp_' apt.predRegExp{iPattern}];
+for iPattern = 1:length(apt.pred.RegExp)
+    apt.predNames{end+1} = ['RegExp_' apt.pred.RegExp{iPattern}];
 end
 
 apt.predX = [apt.predX; Xregexp'];

@@ -3,8 +3,8 @@ function aptIncludePredLength
 %   Detailed explanation goes here
 global apt
 
-if isfield(apt,'predLength')
-    if apt.predLength
+if isfield(apt.pred,'Length')
+    if apt.pred.Length
         lengthSeq = [];
         for i = 1:length(apt.sequence)
             lengthSeq(i) = length(apt.sequence{i});

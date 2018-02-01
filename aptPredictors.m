@@ -7,18 +7,18 @@ function aptPredictors
 global apt
 
 %% Define Predictors
-apt.predExpCond = length(apt.data) > 1;
-apt.predLength = true; % true or false
-apt.predLengthTail = 'all'; % explicit forms in cell array, empty ({}) or 'all' -- count number of same nucleobases at the end.
-apt.predSingles = 'all'; % explicit forms, empty ({}) or 'all'
-apt.predDimers = 'all';%'all'; % explicit forms, empty ({}) or 'all'
-apt.predCodons = 'all';%'all'; % explicit forms, empty ({}) or 'all'
-apt.predNMers = '';%{'TATA'}; % explicit forms or empty
-apt.predRegExp = {'GG[ACT]{1}GG','GG[ACT]{2}GG','GG[ACT]{3}GG','GG[ACT]{4}GG'};
-apt.predInteractionTerms = '';%{'Single_G*Single_C'};
+apt.pred.ExpCond = length(apt.data) > 1;
+apt.pred.Length = true; % true or false
+apt.pred.LengthTail = 'all'; % explicit forms in cell array, empty ({}) or 'all' -- count number of same nucleobases at the end.
+apt.pred.Singles = 'all'; % explicit forms, empty ({}) or 'all'
+apt.pred.Dimers = 'all';%'all'; % explicit forms, empty ({}) or 'all'
+apt.pred.Codons = 'all';%'all'; % explicit forms, empty ({}) or 'all'
+apt.pred.NMers = '';%{'TATA'}; % explicit forms or empty
+apt.pred.RegExp = {'GG[ACT]{1}GG','GG[ACT]{2}GG','GG[ACT]{3}GG','GG[ACT]{4}GG'};
+apt.pred.InteractionTerms = '';%{'Single_G*Single_C'};
 
-apt.predCertainPosFeatures.position = 1:15; % this is not done dynamically, because in validation sequences length might differ.
-apt.predCertainPosFeatures.pattern = {'G','G','T','T','G','G','T','G','T','G','G','T','T','G','G'};
+apt.pred.CertainPosFeatures.position = 1:15; % this is not done dynamically, because in validation sequences length might differ.
+apt.pred.CertainPosFeatures.pattern = {'G','G','T','T','G','G','T','G','T','G','G','T','T','G','G'};
 
 % Symmetrien, Spiegelungen,.... G->C
 % nmercount, look up symmetric one from the other side.

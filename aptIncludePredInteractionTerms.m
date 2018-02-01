@@ -4,12 +4,12 @@ function [predX,predNames] = aptIncludePredInteractionTerms
 
 global apt
 
-if ~isfield(apt,'predInteraction')
+if ~isfield(apt.pred,'Interaction')
     return
 end
 
-for iInteraction = 1:length(apt.predInteraction)
-    intTerms = strsplit(apt.predInteraction{iInteraction},'*');
+for iInteraction = 1:length(apt.pred.Interaction)
+    intTerms = strsplit(apt.pred.Interaction{iInteraction},'*');
     idx1 = find(~cellfun(@isempty,regexp(apt.predNames,['\_' intTerms{1} '$'])));
     idx2 = find(~cellfun(@isempty,regexp(apt.predNames,['\_' intTerms{2} '$'])));
     if length(idx1)~= 1 || length(idx2)~= 1
@@ -19,7 +19,7 @@ for iInteraction = 1:length(apt.predInteraction)
 end
 
 for iInteraction = 1:length(apt.predInteraction)
-    apt.predNames{end+1} = ['Interaction_' apt.predInteraction{iInteraction}];
+    apt.predNames{end+1} = ['Interaction_' apt.pred.Interaction{iInteraction}];
 end
 
 apt.predX = [apt.predX; XInteraction'];

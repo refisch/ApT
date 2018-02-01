@@ -8,18 +8,18 @@ function [predX,predNames] = aptIncludePredNMers
 
 global apt
 
-if (~isfield(apt,'predNMers')||isempty(apt.predNMers))
+if (~isfield(apt.pred,'predNMers')||isempty(apt.pred.NMers))
     return
 end
 
 for iseq = 1:length(apt.sequence)
-    for iLetter = 1:length(apt.predNMers)
-        FindNMer = regexp(apt.sequence{iseq},apt.predNMers{iLetter});
-        XbasecountSeq(iseq,iLetter) = length(FindNMer) - sum(diff(FindNMer)<length(apt.predNMers{iLetter}));
+    for iLetter = 1:length(apt.pred.NMers)
+        FindNMer = regexp(apt.sequence{iseq},apt.pred.NMers{iLetter});
+        XbasecountSeq(iseq,iLetter) = length(FindNMer) - sum(diff(FindNMer)<length(apt.pred.NMers{iLetter}));
     end
 end
-for i = 1:length(apt.predNMers)
-    apt.predNames{end+1} = ['Count_NMer_' apt.predNMers{i}];
+for i = 1:length(apt.pred.NMers)
+    apt.predNames{end+1} = ['Count_NMer_' apt.pred.NMers{i}];
 end
 
 apt.predX = [apt.predX; XbasecountSeq'];

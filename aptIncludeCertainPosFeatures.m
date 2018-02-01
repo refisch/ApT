@@ -5,12 +5,12 @@ function [predX,predNames] = aptIncludeCertainPosFeatures
 
 global apt
 
-if ~isfield(apt,'predCertainPosFeatures')
+if ~isfield(apt.pred,'CertainPosFeatures')
     return
 end
 
-position = apt.predCertainPosFeatures.position;
-pattern = apt.predCertainPosFeatures.pattern;
+position = apt.pred.CertainPosFeatures.position;
+pattern = apt.pred.CertainPosFeatures.pattern;
 
 if length(pattern) ~= length(position)
     error('patterns have to start at position. they need the same length!')

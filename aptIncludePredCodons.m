@@ -8,23 +8,23 @@ function [predX,predNames] = aptIncludePredCodons
 
 global apt
 
-if ~isfield(apt,'predCodons')
+if ~isfield(apt.pred,'Codons')
     return
 end
 
-if apt.predCodons == 'all'
+if apt.pred.Codons == 'all'
     structBC = codoncount('A');
-    apt.predCodons = fieldnames(structBC);
+    apt.pred.Codons = fieldnames(structBC);
 end
 
 for iseq = 1:length(apt.sequence)
     structBC = codoncount(apt.sequence{iseq});
-    for iLetter = 1:length(apt.predCodons)
-        XbasecountSeq(iseq,iLetter) = structBC.(apt.predCodons{iLetter});
+    for iLetter = 1:length(apt.pred.Codons)
+        XbasecountSeq(iseq,iLetter) = structBC.(apt.pred.Codons{iLetter});
     end
 end
-for i = 1:length(apt.predCodons)
-    apt.predNames{end+1} = ['Count_Codon_' apt.predCodons{i}];
+for i = 1:length(apt.pred.Codons)
+    apt.predNames{end+1} = ['Count_Codon_' apt.pred.Codons{i}];
 end
 
 apt.predX = [apt.predX; XbasecountSeq'];
