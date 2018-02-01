@@ -15,7 +15,8 @@ for iY = 1:length(apt.Y)
     for id = 1:length(apt.data)
         subplot(length(apt.data),1,id)
         histogram(apt.data(id).Y{iY},'BinEdges',myEdges)
-        title(strrep(apt.data(id).filename,'_','\_'))
+        title(strrep(strrep(strrep(apt.data(id).filename,'_','\_'),'.csv',''),'Data/',''))
+        suptitle([apt.data(1).obsName{iY} '; n = ' num2str(sum(~isnan(apt.Y{iY})))])
     end
     
     if apt.config.doLog10
@@ -27,6 +28,7 @@ for iY = 1:length(apt.Y)
         subplot(2,1,2)
         histogram(1./apt.weightsY{iY})
         title('Histogram of standard errors (log10) calculated from replicates')
+        suptitle([apt.data(1).obsName{iY} '; n = ' num2str(sum(~isnan(apt.Y{iY})))])
     else
         figure
         subplot(2,1,1)
@@ -36,6 +38,7 @@ for iY = 1:length(apt.Y)
         subplot(2,1,2)
         histogram(1./apt.weightsY{iY},0:20:300)
         title('Histogram of standard errors calculated from replicates')
+        suptitle([apt.data(1).obsName{iY} '; n = ' num2str(sum(~isnan(apt.Y{iY})))])
     end
     
 end
