@@ -20,6 +20,7 @@ apt.pred.InteractionTerms = '';%{'Single_G*Single_C'};
 apt.pred.CertainPosFeatures.position = 1:15; % this is not done dynamically, because in validation sequences length might differ.
 apt.pred.CertainPosFeatures.pattern = {'G','G','T','T','G','G','T','G','T','G','G','T','T','G','G'};
 
+apt.pred.symmetry = 1;
 % Symmetrien, Spiegelungen,.... G->C
 % nmercount, look up symmetric one from the other side.
 
@@ -37,6 +38,7 @@ aptIncludePredNMers;
 aptIncludeRegExp;
 aptIncludeCertainPosFeatures;
 aptIncludePredInteractionTerms;
+aptIncludeSymmetry;
 
 end
 
