@@ -3,9 +3,9 @@ function aptRankPredictors
 
 global apt
 
-totRank = zeros(size(apt.stats(1).beta(:,1)));
+totRank = zeros(size(apt.rankstats(1).beta(:,1)));
 for iY = 1:length(apt.Y)
-    absBetas = abs(apt.stats(iY).beta(:,apt.stats(iY).Index1SE));
+    absBetas = abs(apt.rankstats(iY).beta(:,apt.rankstats(iY).Index1SE));
     [~,rank{iY}]  = ismember(absBetas,flip(unique(absBetas)));
     rank{iY}(rank{iY} == max(rank{iY})) = floor(mean([length(totRank),length(totRank)-sum(absBetas == 0)]));
     totRank = totRank + rank{iY};

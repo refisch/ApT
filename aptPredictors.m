@@ -1,10 +1,14 @@
-function aptPredictors
+function aptPredictors(validationMode)
 %APTPREDICTORS generates design matrix predX of sequence.
 %  'sequence' ist cell array of aptamers.
 %  Predictors are defined in first section. Subfunctions will then generate
 %  predX and predNames
 
 global apt
+
+if ~exist('validationMode','var')
+    validationMode = false;
+end
 
 %% Define Predictors
 apt.pred.ExpCond = length(apt.data) > 1;
@@ -25,10 +29,15 @@ apt.pred.symmetry = 1;
 % nmercount, look up symmetric one from the other side.
 
 %% Calculate design matrix X
+if validationMode
+    truePredNames = apt.predNames;
+    truePredX = apt.predX;
+end
+
 apt.predNames = {};
 apt.predX = [];
 
-aptIncludeExperimentalConditions;
+aptIncludeExperimentalConditions(validationMode);
 aptIncludePredLength;
 aptIncludePredLengthTail;
 aptIncludePredSingles;
@@ -39,6 +48,13 @@ aptIncludeRegExp;
 aptIncludeCertainPosFeatures;
 aptIncludePredInteractionTerms;
 aptIncludeSymmetry;
+
+if validationMode
+    apt.vali.predNames = apt.predNames;
+    apt.vali.predX = apt.predX;
+    apt.predNames = truePredNames;
+    apt.predX = truePredX;
+end
 
 end
 

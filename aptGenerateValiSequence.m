@@ -1,4 +1,4 @@
-function aptGenerateSequence(numberSequences)
+function aptGenerateValiSequence
 %APTGENERATESEQUENCE generates numberSequences new sequences mimicking the
 %input sequences given.
 %   mode of generating new sequences is stored in apt.modeToGenerateNewSequences
@@ -10,13 +10,9 @@ if~isfield(apt,'sequence')
     error('this function requires some input sequences that will be mimicked.')
 end
 
-if(~exist('numberSequences','var') || isempty(numberSequences))
-    numberSequences = 100;
-end
-
-if ~isfield(apt,'modeToGenerateNewSequences')
-    apt.modeToGenerateNewSequences = 'random';
-elseif ~(strcmp(apt.modeToGenerateNewSequences,'random') || strcmp(apt.modeToGenerateNewSequences,'mutated'))
+if ~isfield(apt.vali,'mode')
+    apt.vali.mode = 'random';
+elseif ~(strcmp(apt.vali.mode,'random') || strcmp(apt.vali.mode,'mutated'))
     error('I do not know this mode of creating new sequences.')
 end
 
@@ -24,29 +20,29 @@ end
 % sequences with almost same amount of information.
 
 lowerBound = floor(quantile(cellfun(@length,apt.sequence),0.05));
-apt.sequence95pc = apt.sequence(cellfun(@length,apt.sequence)>lowerBound);
+apt.vali.sequence95pc = apt.sequence(cellfun(@length,apt.sequence)>lowerBound);
 
-[W,figh] = seqlogo(apt.sequence95pc);
+[W,figh] = seqlogo(apt.vali.sequence95pc);
 close(figh)
 
-switch apt.modeToGenerateNewSequences
+switch apt.vali.mode
     case 'mutated' % This mode first looks for most prominent sequence and than mutates randomly some positions only
         
         % Start with mean Sequence
-        minLen = min(cellfun(@length,apt.sequence95pc));
+        minLen = min(cellfun(@length,apt.vali.sequence95pc));
         meanSeq = char(zeros(1,minLen));
         for iPos = 1:minLen
             [~,idxmax] = max(W{2}(:,iPos));
             meanSeq(iPos) = W{1}(idxmax);
         end
-        totDist = aptCalcStringDistance(meanSeq,apt.sequence95pc);
+        totDist = aptCalcStringDistance(meanSeq,apt.vali.sequence95pc);
         minSeq = meanSeq;
         
         % Aim: Find sequence that minimizes distance to other sequences by random perturbations.
         for iPerm = 1:5000 % 10000 perturbations = 20s
             PertSeq = minSeq;
             PertSeq(ceil(rand(1)*minLen)) = W{1}(ceil(rand(1)*4));
-            currDist = aptCalcStringDistance(PertSeq,apt.sequence95pc);
+            currDist = aptCalcStringDistance(PertSeq,apt.vali.sequence95pc);
             [totDist, minidx] = min([totDist currDist]);
             if minidx == 2
                 minSeq = PertSeq;
@@ -54,11 +50,11 @@ switch apt.modeToGenerateNewSequences
         end
         
         % Now perturb optimal sequence to obtain new candidate sequences.
-        generatedSequence = cell(numberSequences,1);
+        generatedSequence = cell(1,apt.vali.number);
         generatedSequence(:) ={minSeq};
-        Pert = poissrnd(minLen/5,1,numberSequences);% Poissonian random number.
+        Pert = poissrnd(minLen/5,1,apt.vali.number);% Poissonian random number.
         
-        for iSeq = 1:numberSequences
+        for iSeq = 1:apt.vali.number
             idxShuffle = randperm(minLen);
             generatedSequence{iSeq}(idxShuffle(1:Pert(iSeq))) = W{1}(ceil(rand(1,Pert(iSeq))*4));
         end
@@ -70,10 +66,10 @@ switch apt.modeToGenerateNewSequences
         maxLen = max(cellfun(@length,apt.sequence));
         minLen = min(cellfun(@length,apt.sequence));
         
-        lengths = floor((maxLen-minLen).*rand(numberSequences,1) + minLen);
+        lengths = floor((maxLen-minLen).*rand(apt.vali.number,1) + minLen);
         
-        generatedSequence = cell(numberSequences,1);
-        for iSeq = 1:numberSequences
+        generatedSequence = cell(1,apt.vali.number);
+        for iSeq = 1:apt.vali.number
             for iPos = 1:lengths(iSeq)
                 rN = rand(1);
                 for iBase = 1:length(W{1})
@@ -86,6 +82,6 @@ switch apt.modeToGenerateNewSequences
             end
         end
 end
-apt.generatedSequence = generatedSequence;
+apt.vali.generatedSequence = generatedSequence;
 end
 
