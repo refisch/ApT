@@ -12,13 +12,17 @@ for iY = 1:length(apt.Y)
         [axh] = lassoPlot(apt.stats(iY).beta,apt.stats(iY));
     end
     hold on
-    % Standard regression -- take care of NaNs in apt.Y!! 
     Xreg = [ones(size(apt.Y{iY})), apt.predX'];
-    betareg{iY} = regress(apt.Y{iY}, Xreg);
-    MSEreg{iY} = 1 / length(apt.Y{iY}) * sum((apt.Y{iY}-Xreg*betareg{iY}).^2);
-    plot(axh,apt.stats(iY).Lambda, ones(1,length(apt.stats(iY).Lambda))*MSEreg{iY},'r--');
+    betareg = regress(apt.Y{iY}(~isnan(apt.Y{iY})), Xreg((~isnan(apt.Y{iY})),:));
+    MSEreg = 1 / sum(apt.Y{iY}(~isnan(apt.Y{iY}))) * sum((apt.Y{iY}(~isnan(apt.Y{iY}))-Xreg(~isnan(apt.Y{iY}),:)*betareg).^2);
+    plot(axh,apt.stats(iY).Lambda, ones(1,length(apt.stats(iY).Lambda))*MSEreg,'r--');
     title(['Cross-validated MSE of Lasso fit for observable ' apt.data(1).obsName{iY}])
     hold off
+    
+    linReg.X = Xreg;
+    linReg.beta = betareg;
+    linReg.MSE = MSEreg;
+    apt.linReg(iY) = linReg;
 end
 end
 

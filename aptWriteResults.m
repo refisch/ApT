@@ -14,6 +14,16 @@ else
     digits = '1';
 end
 fid = fopen([filename '.txt'],'w');
+totDataPoints = 0;
+for iY = 1:length(apt.Y)
+    totDataPoints = totDataPoints+length(apt.Y{iY});
+end
+
+apt.info.totalNumberDataPoints = totDataPoints; 
+apt.info.uniqueSequences = length(unique(apt.sequence));
+apt.info.totalNumberPredictors = length(apt.predNames);
+
+fprintf(fid,'Lasso Regression analysis with %d predictors of %d observables with %d unique sequences and a total of %d datapoints\n\n',apt.info.totalNumberPredictors,length(apt.Y),apt.info.uniqueSequences,apt.info.totalNumberDataPoints);
 for iY = 1:length(apt.Y)
     [beta_sorted,idxA] = sort(apt.stats(iY).beta(:,apt.stats(iY).Index1SE),'descend');
     predNames_sorted = apt.predNames(idxA);
