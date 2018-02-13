@@ -26,7 +26,7 @@ for iY = 1:length(apt.data(1).obsName)
         looY = apt.Y{iY}(idxV);
         looPredX = apt.predX(:,idxV)';
         
-        if apt.config.doPreprocessing
+        if apt.config.fitReplicates
             [beta, stats] = lasso(cvPredX,cvY,'PredictorNames',apt.predNames,'Weights',cvWeightsY);
         else
             [beta, stats] = lasso(cvPredX,cvY,'PredictorNames',apt.predNames);

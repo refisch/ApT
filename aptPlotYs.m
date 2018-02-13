@@ -35,7 +35,7 @@ for iY = iYs
         title(s2, 'backtransformed to lin scale')
         xlabel(s1,'measured')
         xlabel(s2,'measured')
-        if loocv || all(Yfit == apt.LOOCV(iY).YPredicted)
+        if isfield(apt,'LOOCV') && all(Yfit == apt.LOOCV(iY).YPredicted)
             myYLab = 'predicted';
         else
             myYLab = 'fitted';

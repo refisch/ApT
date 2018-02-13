@@ -14,13 +14,23 @@ if isfield(apt.pred,'ExpCond')
         arrayData = [];
         if ~validationMode
             for id = 1:length(apt.data)
-                conc = [conc apt.data(id).conc*ones(1,length(unique(apt.data(id).sequence)))];
-                arrayData = [arrayData apt.data(id).array*ones(1,length(unique(apt.data(id).sequence)))];
+                if apt.config.fitReplicates
+                    conc = [conc apt.data(id).conc*ones(1,length(unique(apt.data(id).sequence)))];
+                    arrayData = [arrayData apt.data(id).array*ones(1,length(unique(apt.data(id).sequence)))];
+                else
+                    conc = [conc apt.data(id).conc*ones(1,length(apt.data(id).sequence))];
+                    arrayData = [arrayData apt.data(id).array*ones(1,length(apt.data(id).sequence))];
+                end
             end
         else
             for id = 1:length(apt.data)
-                expConc(id) = apt.data(id).conc;
-                arrayData = [arrayData apt.data(id).array*ones(1,length(unique(apt.data(id).sequence)))];
+                if apt.config.fitReplicates
+                    expConc(id) = apt.data(id).conc;
+                    arrayData = [arrayData apt.data(id).array*ones(1,length(unique(apt.data(id).sequence)))];
+                else 
+                    expConc(id) = apt.data(id).conc;
+                    arrayData = [arrayData apt.data(id).array*ones(1,length(apt.data(id).sequence))];
+                end
             end
             expConc = mean(expConc);
             conc = expConc*ones(1,length(apt.sequence));
