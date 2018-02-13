@@ -1,4 +1,4 @@
-function aptReadSequenceData(filename, observables)
+function aptReadSequenceData(filename, observables,predictors)
 %APTREADSEQUENCEDATA reads in data from filename.
 % filename is 'str'
 
@@ -6,6 +6,10 @@ global apt
 
 if ~exist('observables','var')
     observables = {'MaxIncrease'};
+end
+
+if ~exist('observables','var')
+    predictors = {};
 end
 
 if ~isfield(apt,'data')
@@ -28,6 +32,18 @@ for iObs = 1:length(observables)
     end
     apt.data(id).Y{iObs} = data(:,idxObs);
 end
+
+
+for iPred = 1:length(predictors)
+    idxPred = find(strcmp(header,predictors(iPred)));
+    apt.data(id).predName{iPred} = predictors{iPred};
+    if isempty(idxPred)
+        apt.data(id).X{iPred} = nan(size(apt.data(id).sequence));
+        continue
+    end
+    apt.data(id).X{iPred} = data(:,idxPred);
+end
+
 
 apt.data(id).array = id; % default behavior
 apt.data(id).conc = nan;

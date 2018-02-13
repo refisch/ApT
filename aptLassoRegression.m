@@ -18,7 +18,9 @@ for iY = 1:length(apt.data(1).obsName)
     clear stats;
     
     tic
-    apt.normalizedPredX = zscore(apt.predX')';
+    zscor_xnan = @(x) bsxfun(@rdivide, bsxfun(@minus, x, mean(x,'omitnan')), std(x, 'omitnan')); %NaN handling
+    apt.normalizedPredX = zscor_xnan(apt.predX')';
+    apt.normalizedPredX(all(isnan(apt.normalizedPredX),2),:) = 0;
     if apt.config.fitReplicates
         [beta, stats] = lasso(apt.normalizedPredX',apt.Y{iY},'PredictorNames',apt.predNames,'Weights',apt.weightsY{iY},'CV',nfoldCV);
     else

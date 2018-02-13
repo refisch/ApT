@@ -11,6 +11,7 @@ if ~exist('validationMode','var')
 end
 
 %% Define Predictors
+apt.pred.DataPredictors = apt.data(1).predName;
 apt.pred.ExpCond = length(apt.data) > 1;
 apt.pred.Length = true; % true or false
 apt.pred.LengthTail = 'all'; % explicit forms in cell array, empty ({}) or 'all' -- count number of same nucleobases at the end.
@@ -24,7 +25,7 @@ apt.pred.InteractionTerms = '';%{'Single_G*Single_C'};
 apt.pred.CertainPosFeatures.position = 1:15; % this is not done dynamically, because in validation sequences length might differ.
 apt.pred.CertainPosFeatures.pattern = {'G','G','T','T','G','G','T','G','T','G','G','T','T','G','G'};
 
-apt.pred.symmetry = 1;
+apt.pred.symmetry = true;
 % Symmetrien, Spiegelungen,.... G->C
 % nmercount, look up symmetric one from the other side.
 
@@ -37,8 +38,10 @@ end
 apt.predNames = {};
 apt.predX = [];
 
+
 aptIncludeExperimentalConditions(validationMode);
 aptIncludePredLength;
+aptIncludeDataPredictors;
 aptIncludePredLengthTail;
 aptIncludePredSingles;
 aptIncludePredDimers;
