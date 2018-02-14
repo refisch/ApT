@@ -6,7 +6,7 @@ function aptGenerateValiSequence
 
 global apt
 
-if~isfield(apt,'sequence')
+if ~isfield(apt,'sequence')
     error('this function requires some input sequences that will be mimicked.')
 end
 
@@ -30,13 +30,12 @@ switch apt.vali.mode
         
         % Start with mean Sequence
         minLen = min(cellfun(@length,apt.vali.sequence95pc));
-        meanSeq = char(zeros(1,minLen));
+        minSeq = char(zeros(1,minLen));
         for iPos = 1:minLen
             [~,idxmax] = max(W{2}(:,iPos));
-            meanSeq(iPos) = W{1}(idxmax);
+            minSeq(iPos) = W{1}(idxmax);
         end
-        totDist = aptCalcStringDistance(meanSeq,apt.vali.sequence95pc);
-        minSeq = meanSeq;
+        totDist = aptCalcStringDistance(minSeq,apt.vali.sequence95pc);
         
         % Aim: Find sequence that minimizes distance to other sequences by random perturbations.
         for iPerm = 1:5000 % 10000 perturbations = 20s
