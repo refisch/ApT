@@ -22,9 +22,9 @@ for iseq = 1:length(apt.sequence)
         C = mat2cell(apt.sequence{iseq},1,[ilen,length(apt.sequence{iseq})-ilen]);
         antiSeq = strrep(strrep(strrep(strrep(strrep(strrep(C{1},'T','Z'),'A','T'),'Z','A'),'G','B'),'C','G'),'B','C');
         swScoreTmp(ilen) = swalign(C{1},C{2});
-        antiswScoreTmp(ilen) = swalign(antiSeq,C{2});
+        antiswScoreTmp(ilen) = swalign(antiSeq,C{2},'ALPHABET','NT');
         nwScoreTmp(ilen) = nwalign(C{1},C{2});
-        antinwScoreTmp(ilen) = nwalign(antiSeq,C{2});
+        antinwScoreTmp(ilen) = nwalign(antiSeq,C{2},'ALPHABET','NT');
     end
     swScore(iseq) = max(swScoreTmp);
     antiSwScore(iseq) = max(antiswScoreTmp);
