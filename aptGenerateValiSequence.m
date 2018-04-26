@@ -12,7 +12,7 @@ end
 
 if ~isfield(apt.vali,'mode')
     apt.vali.mode = 'random';
-elseif ~(strcmp(apt.vali.mode,'random') || strcmp(apt.vali.mode,'mutated'))
+elseif ~(strcmp(apt.vali.mode,'random') || strcmp(apt.vali.mode,'mutated') || strcmp(apt.vali.mode,'best_seq'))
     error('I do not know this mode of creating new sequences.')
 end
 
@@ -51,7 +51,7 @@ switch apt.vali.mode
         % Now perturb optimal sequence to obtain new candidate sequences.
         generatedSequence = cell(1,apt.vali.number);
         generatedSequence(:) ={minSeq};
-        Pert = poissrnd(minLen/5,1,apt.vali.number);% Poissonian random number.
+        Pert = poissrnd(minLen/5,1,apt.vali.number);% Poissonian random numbers.
         
         for iSeq = 1:apt.vali.number
             idxShuffle = randperm(minLen);
@@ -80,6 +80,30 @@ switch apt.vali.mode
                 generatedSequence{iSeq}(iPos) = rBase;
             end
         end
+        
+        case 'best_seq' % This mode randomly alters best performing sequences
+            nMax = 10; % number of best performer for each observable
+            generatedSequence = cell(1,apt.vali.number);
+            numIter = floor(apt.vali.number /(nMax * length(apt.Y)));
+            iterCounter = 0;
+            for ivar = 1:length(apt.Y)
+                [~,idxMax] = maxk(apt.Yfit1SE{ivar},nMax);
+                for iSeq = 1:length(idxMax)
+                    posSeq = ((numIter*(iterCounter)):(numIter*(iterCounter+1)))+1;
+                    for iPos = 1:length(posSeq)
+                        generatedSequence{posSeq(iPos)} = apt.sequence{idxMax(iSeq)};
+                    end
+                    iterCounter = iterCounter+1;
+                end
+            end
+        
+        for iSeq = 1:apt.vali.number
+            Pert = poissrnd(length(generatedSequence{iSeq})/5,1,1);% Poissonian random number. - number of alterations
+            idxShuffle = randperm(length(generatedSequence{iSeq}));
+            generatedSequence{iSeq}(idxShuffle(1:Pert)) = W{1}(ceil(rand(1,Pert)*4)); % completely random AGCT
+        end
+        idxEmpty = cellfun(@isempty,generatedSequence);
+        generatedSequence = generatedSequence(~idxEmpty);
 end
 apt.vali.generatedSequence = generatedSequence;
 end
