@@ -52,6 +52,17 @@ aptIncludeCertainPosFeatures;
 aptIncludePredInteractionTerms;
 aptIncludeSymmetry;
 
+% Zscore on predictor level -- What about validation mode???
+if isfield(apt.config,'doZscoreModel') && apt.config.doZscoreModel
+    [apt.predX, apt.zscore.XMu, apt.zscore.XStd] = zscore(apt.predX');
+    apt.predX = apt.predX'; apt.zscore.XMu = apt.zscore.XMu'; apt.zscore.XStd = apt.zscore.XStd';
+end
+
+% Eliminate those predictors where there is no information
+removePreds = sum(abs(apt.predX),2) == 0;
+apt.predX = apt.predX(~removePreds,:);
+apt.predNames = apt.predNames(~removePreds);
+
 if validationMode
     apt.vali.predNames = apt.predNames;
     apt.vali.predX = apt.predX;

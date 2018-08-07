@@ -80,6 +80,33 @@ for id = 1:length(apt.data)
     end
 end
 
+% Zscore on data level?
+if isfield(apt.config,'doZscoreData') && apt.config.doZscoreData
+    for id = 1:length(apt.Y)
+        [apt.Y{id}(~isnan(apt.Y{id})),apt.zscore.YMu(id),apt.zscore.YStd(id)] = zscore(apt.Y{id}(~isnan(apt.Y{id})));
+        % weights?
+    end
+end
+
+% Shall we split spacer??
+if isfield(apt.config,'splitSequence') && apt.config.splitSequence
+    for iseq = 1:length(apt.sequence)
+        tmpseq = flip(apt.sequence{iseq});
+        idxLL = regexp(tmpseq,tmpseq(1));
+        splitHere = find(idxLL ~= 1:length(idxLL));
+        if isempty(splitHere)
+            splitHere = length(idxLL)+1;
+        end
+        splitHere = splitHere(1);
+        if splitHere > 3
+            apt.sequence{iseq} = flip(tmpseq(splitHere:length(tmpseq)));
+            apt.spacer{iseq} = flip(tmpseq(1:(splitHere-1)));
+        else
+            apt.spacer{iseq} = '';
+        end
+    end
+end
+
 % Do test about log10-distributed errors
 if isfield(apt, 'weightsY')
     for iY = 1:length(apt.Y)

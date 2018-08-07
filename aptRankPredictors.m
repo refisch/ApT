@@ -3,11 +3,23 @@ function aptRankPredictors
 
 global apt
 
-totRank = zeros(size(apt.rankstats(1).beta(:,1)));
-isNegativeAll = true(size(apt.rankstats(1).beta(:,1)));
+if isfield(apt,'rankstats')
+    rankstats = apt.rankstats;
+else
+    if apt.config.doZscoreData && apt.config.doZscoreModel
+        rankstats = apt.stats;
+    else
+        fID = fopen('Results.txt','a+');
+        fprintf(fID,'\n No ranking of predictors as no zscore calculation was done \n');
+        return
+    end
+end
+
+totRank = zeros(size(rankstats(1).beta(:,1)));
+isNegativeAll = true(size(rankstats(1).beta(:,1)));
 for iY = 1:length(apt.Y)
-    absBetas = abs(apt.rankstats(iY).beta(:,apt.rankstats(iY).Index1SE));
-    isNegativeAll = isNegativeAll & apt.rankstats(iY).beta(:,apt.rankstats(iY).Index1SE)<0;
+    absBetas = abs(rankstats(iY).beta(:,rankstats(iY).Index1SE));
+    isNegativeAll = isNegativeAll & rankstats(iY).beta(:,rankstats(iY).Index1SE)<0;
     [~,rank{iY}]  = ismember(absBetas,flip(unique(absBetas)));
     rank{iY}(rank{iY} == max(rank{iY})) = floor(mean([length(totRank),length(totRank)-sum(absBetas == 0)]));
     totRank = totRank + rank{iY};
