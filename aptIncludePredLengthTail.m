@@ -16,13 +16,23 @@ end
 if apt.pred.LengthTail == 'all'
     structBC = basecount('A');
     predLengthTail = fieldnames(structBC);
-% else?? -ToDo
+    % else??
 end
 
+XlengthSeq = zeros(length(apt.sequence),length(predLengthTail));
 for iseq = 1:length(apt.sequence)
-    for iLetter = 1:length(predLengthTail)
-        idxNotLastLetter = regexp(apt.sequence{iseq},['[^' predLengthTail{iLetter} ']']);
-        XlengthSeq(iseq,iLetter) = length(apt.sequence{iseq}) - max(idxNotLastLetter);
+    if isfield(apt,'spacer')
+        if isempty(apt.spacer{iseq})
+            XlengthSeq(iseq,:) = zeros(size(whichNC));
+        else
+            whichNC = strcmp(predLengthTail,apt.spacer{iseq}(1));
+            XlengthSeq(iseq,:) = length(apt.spacer{iseq})* whichNC;
+        end
+    else
+        for iLetter = 1:length(predLengthTail)
+            idxNotLastLetter = regexp(apt.sequence{iseq},['[^' predLengthTail{iLetter} ']']);
+            XlengthSeq(iseq,iLetter) = length(apt.sequence{iseq}) - max(idxNotLastLetter);
+        end
     end
 end
 for i = 1:length(predLengthTail)

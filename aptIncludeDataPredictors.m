@@ -5,7 +5,8 @@ function aptIncludeDataPredictors
 global apt;
 if isfield(apt.pred,'DataPredictors') && ~isempty(apt.pred.DataPredictors)
     if apt.config.fitReplicates
-        warning('You try to include specific info of individual data points, but you want to fit replicates. I am going to skip this predictor')
+        warning('You try to include specific info of individual data points, but you want to fit replicates. I am going to skip these predictors including:')
+        disp(apt.pred.DataPredictors)
         return
     else
         predNames = intersect(apt.pred.DataPredictors,apt.data(1).predName);
