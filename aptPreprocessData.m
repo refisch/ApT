@@ -26,7 +26,19 @@ else
     apt.config.doLog10 = false;
 end
 
-% construct fields apt.sequemce, apt.Y and .apt.weightsY carrying all information
+% find minimum over all data sets and correct for negative values
+if apt.config.doLog10
+    minY = zeros(1,length(apt.data(1).Y));
+    for iY = 1:length(apt.data(1).Y)
+        minYtmp = 0;
+        for id = 1:length(apt.data)
+            minYtmp = min([minYtmp apt.data(id).Y{iY}']);
+        end
+        minY(iY) = minYtmp;
+    end
+    minY(minY<0) = abs(minY(minY<0)) + offset_logScale;
+end
+% construct fields apt.sequence, apt.Y and apt.weightsY carrying all information
 for id = 1:length(apt.data)
     if isempty(apt.data(id).sequence)
         continue
@@ -39,9 +51,7 @@ for id = 1:length(apt.data)
             stdyPP = zeros(size(uniSequence));
             
             if apt.config.doLog10
-                if min(Y)<0
-                    Y = Y+abs(min(Y))+offset_logScale;
-                end
+                Y = Y+minY(iY);
                 for iGroups = 1:length(uniSequence)
                     yPP(iGroups) = mean(log10(Y(idxSeq==iGroups)));
                     stdyPP(iGroups) = std(log10(Y(idxSeq==iGroups)));
@@ -61,9 +71,7 @@ for id = 1:length(apt.data)
         for iY = 1:length(apt.data(id).Y)
             Y = apt.data(id).Y{iY};
             if apt.config.doLog10
-                if min(Y)<0
-                    Y = Y+abs(min(Y))+offset_logScale;
-                end
+                Y = Y+minY(iY);
                 Y = log10(Y);
             end
             apt.Y{iY} = [apt.Y{iY};Y];
