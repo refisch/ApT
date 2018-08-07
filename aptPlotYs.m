@@ -48,6 +48,9 @@ for iY = iYs
         scatter(apt.Y{iY},Yfit,'b');
         hold on
         plot([min(apt.Y{iY}),max(apt.Y{iY})],[min(apt.Y{iY}),max(apt.Y{iY})],'b--');
+        xlabel('measured')
+        ylabel('fitted')
+        title([apt.data(1).obsName{iY} '; n = ' num2str(sum(~isnan(apt.Y{iY})))])
     end
 end
 end
