@@ -22,14 +22,17 @@ end
 % Log scale?
 if isfield(apt, 'config') && isfield(apt.config, 'doLog10Extern')
     apt.config.doLog10 = apt.config.doLog10Extern;
+    if length(apt.data(1).obsName) ~= length(apt.config.doLog10)
+        warning('Need a value for each observable')
+    end
 else
-    apt.config.doLog10 = false;
+    apt.config.doLog10 = false(size(apt.data(1).obsName));
 end
 
 % find minimum over all data sets and correct for negative values
-if apt.config.doLog10
-    minY = zeros(1,length(apt.data(1).Y));
-    for iY = 1:length(apt.data(1).Y)
+minY = zeros(1,length(apt.data(1).Y));
+for iY = 1:length(apt.data(1).Y)
+    if apt.config.doLog10(iY)
         minYtmp = 0;
         for id = 1:length(apt.data)
             minYtmp = min([minYtmp apt.data(id).Y{iY}']);
@@ -50,7 +53,7 @@ for id = 1:length(apt.data)
             yPP = zeros(size(uniSequence));
             stdyPP = zeros(size(uniSequence));
             
-            if apt.config.doLog10
+            if apt.config.doLog10(iY)
                 Y = Y+minY(iY);
                 for iGroups = 1:length(uniSequence)
                     yPP(iGroups) = mean(log10(Y(idxSeq==iGroups)));
@@ -70,7 +73,7 @@ for id = 1:length(apt.data)
     else
         for iY = 1:length(apt.data(id).Y)
             Y = apt.data(id).Y{iY};
-            if apt.config.doLog10
+            if apt.config.doLog10(iY)
                 Y = Y+minY(iY);
                 Y = log10(Y);
             end
@@ -110,7 +113,7 @@ end
 % Do test about log10-distributed errors
 if isfield(apt, 'weightsY')
     for iY = 1:length(apt.Y)
-        if apt.config.doLog10
+        if apt.config.doLog10(iY)
             [Rho,pVal] = corr(apt.Y{iY}',1./apt.weightsY{iY}');
             if pVal<0.01
                 warning('Parson-Test suggests that errors are not log-normal distributed!:')

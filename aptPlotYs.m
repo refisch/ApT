@@ -18,7 +18,7 @@ for iY = iYs
     if loocv 
         Yfit = apt.LOOCV(iY).YPredicted;
     end
-    if apt.config.doLog10
+    if apt.config.doLog10(iY)
         figure
         s1 = subplot(2,1,1);
         scatter(apt.Y{iY},Yfit,'r');

@@ -8,11 +8,7 @@ end
 
 global apt
 
-if apt.config.doLog10
-    digits = '5';
-else
-    digits = '1';
-end
+
 fid = fopen([filename '.txt'],'w');
 totDataPoints = 0;
 for iY = 1:length(apt.Y)
@@ -23,16 +19,22 @@ apt.info.totalNumberDataPoints = totDataPoints;
 apt.info.uniqueSequences = length(unique(apt.sequence));
 apt.info.totalNumberPredictors = length(apt.predNames);
 
-fprintf(fid,'Lasso Regression analysis with %d predictors of %d observables with %d unique sequences and a total of %d datapoints\n\n',apt.info.totalNumberPredictors,length(apt.Y),apt.info.uniqueSequences,apt.info.totalNumberDataPoints);
+fprintf(fid,'Lasso Regression analysis \n with %d predictors of %d observables with %d unique sequences and a total of %d datapoints\n\n',apt.info.totalNumberPredictors,length(apt.Y),apt.info.uniqueSequences,apt.info.totalNumberDataPoints);
 for iY = 1:length(apt.Y)
+    if apt.config.doLog10(iY)
+        digits = '5';
+    else
+        digits = '3';
+    end
+    fprintf(fid,'\n---------------------------------------\n');
+    fprintf(fid,'Observable %d: %s\n\n',iY,apt.data(1).obsName{iY});
     if isfield(apt,'rankstats')
         [beta_sorted,idxA] = sort(apt.rankstats(iY).beta(:,apt.rankstats(iY).Index1SE),'descend');
         predNames_sorted = apt.predNames(idxA);
         idxPred = find(beta_sorted);
-        fprintf(fid,'RootMeanSquaredError = %s\n\n', sqrt(apt.rankstats(iY).MSE(apt.rankstats(iY).Index1SE)));
+        fprintf(fid,'RootMeanSquaredError = %s\n', sqrt(apt.rankstats(iY).MSE(apt.rankstats(iY).Index1SE)));
         fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.rankstats(iY).Intercept(apt.rankstats(iY).Index1SE));
         fprintf(fid,'The %d contributing predictors, sorted with respect to effect size: \n \t\tPredictor\t Value\n',length(idxPred));
-        
         for i = 1:length(idxPred)
             fprintf(fid,['%23s\t\t\t%.' digits 'f\n'],predNames_sorted{idxPred(i)},beta_sorted(idxPred(i)));
         end
