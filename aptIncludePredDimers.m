@@ -8,7 +8,7 @@ function [predX,predNames] = aptIncludePredDimers
 
 global apt
 
-if ~isfield(apt.pred,'Dimers')
+if ~isfield(apt.pred,'Dimers') || isempty(apt.pred.Dimers)
     return
 end
 

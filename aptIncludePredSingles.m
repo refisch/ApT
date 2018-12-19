@@ -7,7 +7,7 @@ function [predX,predNames] = aptIncludePredSingles
 % predNames is cell array of predictor names
 global apt
 
-if ~isfield(apt.pred,'Singles')
+if ~isfield(apt.pred,'Singles') || isempty(apt.pred.Singles)
     return
 end
 

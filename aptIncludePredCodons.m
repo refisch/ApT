@@ -8,7 +8,7 @@ function [predX,predNames] = aptIncludePredCodons
 
 global apt
 
-if ~isfield(apt.pred,'Codons')
+if ~isfield(apt.pred,'Codons') || isempty(apt.pred.Codons)
     return
 end
 
