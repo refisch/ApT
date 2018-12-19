@@ -38,7 +38,6 @@ end
 apt.predNames = {};
 apt.predX = [];
 
-
 aptIncludeExperimentalConditions(validationMode);
 aptIncludePredLength;
 aptIncludeDataPredictors;
@@ -51,6 +50,7 @@ aptIncludeRegExp;
 aptIncludeCertainPosFeatures;
 aptIncludePredInteractionTerms;
 aptIncludeSymmetry;
+aptIncludeSimplifiedSequence;
 
 % Zscore on predictor level -- What about validation mode???
 if isfield(apt.config,'doZscoreModel') && apt.config.doZscoreModel
