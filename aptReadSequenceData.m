@@ -44,6 +44,21 @@ for iPred = 1:length(predictors)
     apt.data(id).X{iPred} = data(:,idxPred);
 end
 
+% Remove nan data?
+if isfield(apt.config,'RemoveNaNData') && apt.config.RemoveNaNData
+    idxnan = false(size(apt.data(id).Y{1}));
+    for iY = 1:length(apt.data(id).Y)
+        idxnan = idxnan | isnan(apt.data(id).Y{iY});
+    end
+    for iY = 1:length(observables)
+        apt.data(id).Y{iY} = apt.data(id).Y{iY}(~idxnan);
+    end
+    for iPred = 1:length(predictors)
+        apt.data(id).X{iPred} = apt.data(id).X{iPred}(~idxnan);
+    end
+    apt.data(id).sequence = apt.data(id).sequence(~idxnan);
+end
+
 
 apt.data(id).array = id; % default behavior
 apt.data(id).conc = nan;
