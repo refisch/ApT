@@ -3,18 +3,20 @@ function aptPlotDataHists
 %   Detailed explanation goes here
 global apt
 
-numBins = 12;
-% minVal = [];
-% maxVal = [];
+numBins = 15;
+
 for iY = 1:length(apt.Y)
-%     for id = 1:length(apt.data)
-%         minVal = min([minVal;apt.data(id).Y{iY}]);
-%         maxVal = max([maxVal;apt.data(id).Y{iY}]);
-%     end
+    minVal = [];
+    maxVal = [];
+    for id = 1:length(apt.data)
+        minVal = min([minVal;apt.data(id).Y{iY}]);
+        maxVal = max([maxVal;apt.data(id).Y{iY}]);
+    end
+    edges= linspace(minVal,maxVal,numBins+1);
     figure
     for id = 1:length(apt.data)
         subplot(length(apt.data),1,id)
-        histogram(apt.data(id).Y{iY},numBins)
+        histogram(apt.data(id).Y{iY},edges)
         title(strrep(strrep(strrep(apt.data(id).filename,'_','\_'),'.csv',''),'Data/',''))
         suptitle([apt.data(1).obsName{iY} '; n = ' num2str(sum(~isnan(apt.Y{iY})))])
     end
