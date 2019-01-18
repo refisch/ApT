@@ -2,15 +2,19 @@ function aptLassoRegression
 %APTLASSOREGRESSION Summary of this function goes here
 %   Detailed explanation goes here
 global apt
+
 nfoldCV = 10;
+CVIdx = aptGetCVIndices(nfoldCV); % find CV blocks respecting data structure (replicates!)
+
+%% Problem when there is nans in weigths and data!!
 
 %% Individual fit
 for iY = 1:length(apt.data(1).obsName)
     tic
     if apt.config.fitReplicates
-        [beta, stats] = lasso(apt.predX',apt.Y{iY},'PredictorNames',apt.predNames,'Weights',apt.weightsY{iY},'CV',nfoldCV);
+        [beta, stats] = lasso(apt.predX',apt.Y{iY},'PredictorNames',apt.predNames,'Weights',apt.weightsY{iY},'CV',CVIdx);
     else
-        [beta, stats] = lasso(apt.predX',apt.Y{iY},'PredictorNames',apt.predNames,'CV',nfoldCV);
+        [beta, stats] = lasso(apt.predX',apt.Y{iY},'PredictorNames',apt.predNames,'CV',CVIdx);
     end
     stats.runtime = toc;
     stats.beta = beta;
