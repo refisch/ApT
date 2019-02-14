@@ -5,7 +5,7 @@ function  aptLoocv(doPlot)
 global apt
 
 if ~exist('doPlot', 'var') || isempty(doPlot)
-    doPlot = 1;
+    doPlot = true;
 end
 
 for iY = 1:length(apt.data(1).obsName)
@@ -21,12 +21,13 @@ for iY = 1:length(apt.data(1).obsName)
         
         cvPredX = apt.predX(:,~idxV)';
         cvY = apt.Y{iY}(~idxV);
-        cvWeightsY = apt.weightsY{iY}(~idxV);
+       
         
         looY = apt.Y{iY}(idxV);
         looPredX = apt.predX(:,idxV)';
         
         if apt.config.fitReplicates
+            cvWeightsY = apt.weightsY{iY}(~idxV);
             [beta, stats] = lasso(cvPredX,cvY,'PredictorNames',apt.predNames,'Weights',cvWeightsY);
         else
             [beta, stats] = lasso(cvPredX,cvY,'PredictorNames',apt.predNames);

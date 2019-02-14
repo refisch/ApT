@@ -8,7 +8,6 @@ end
 
 global apt
 
-
 fid = fopen([filename '.txt'],'w');
 totDataPoints = 0;
 for iY = 1:length(apt.Y)
@@ -20,6 +19,13 @@ apt.info.uniqueSequences = length(unique(apt.sequence));
 apt.info.totalNumberPredictors = length(apt.predNames);
 
 fprintf(fid,'Lasso Regression analysis \n with %d predictors of %d observables with %d unique sequences and a total of %d datapoints\n\n',apt.info.totalNumberPredictors,length(apt.Y),apt.info.uniqueSequences,apt.info.totalNumberDataPoints);
+
+if isfield(apt.config,'useLassoFit') && strcmp(apt.config.useLassoFit,'best')
+    fprintf(fid,'Lasso Fit with Least MSE is used\n');
+else
+    fprintf(fid,'Lasso Fit with one standard error deviance from Least MSE model is used\n');
+end
+
 for iY = 1:length(apt.Y)
     if apt.config.doLog10(iY)
         digits = '5';
@@ -29,21 +35,31 @@ for iY = 1:length(apt.Y)
     fprintf(fid,'\n---------------------------------------\n');
     fprintf(fid,'Observable %d: %s\n\n',iY,apt.data(1).obsName{iY});
     if isfield(apt,'rankstats')
-        [beta_sorted,idxA] = sort(apt.rankstats(iY).beta(:,apt.rankstats(iY).Index1SE),'descend');
+        if isfield(apt.config,'useLassoFit') && strcmp(apt.config.useLassoFit,'best')
+            idxMSE = apt.rankstats(iY).IndexMinMSE;
+        else
+            idxMSE = apt.rankstats(iY).Index1SE;
+        end
+        [beta_sorted,idxA] = sort(apt.rankstats(iY).beta(:,idxMSE),'descend');
         predNames_sorted = apt.predNames(idxA);
         idxPred = find(beta_sorted);
-        fprintf(fid,'RootMeanSquaredError = %s\n', sqrt(apt.rankstats(iY).MSE(apt.rankstats(iY).Index1SE)));
-        fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.rankstats(iY).Intercept(apt.rankstats(iY).Index1SE));
+        fprintf(fid,'RootMeanSquaredError = %s\n', sqrt(apt.rankstats(iY).MSE(idxMSE)));
+        fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.rankstats(iY).Intercept(idxMSE));
         fprintf(fid,'The %d contributing predictors, sorted with respect to effect size: \n \t\tPredictor\t Value\n',length(idxPred));
         for i = 1:length(idxPred)
             fprintf(fid,['%23s\t\t\t%.' digits 'f\n'],predNames_sorted{idxPred(i)},beta_sorted(idxPred(i)));
         end
     else
-        [beta_sorted,idxA] = sort(apt.stats(iY).beta(:,apt.stats(iY).Index1SE),'descend');
+        if isfield(apt.config,'useLassoFit') && strcmp(apt.config.useLassoFit,'best')
+            idxMSE = apt.stats(iY).IndexMinMSE;
+        else
+            idxMSE = apt.stats(iY).Index1SE;
+        end
+        [beta_sorted,idxA] = sort(apt.stats(iY).beta(:,idxMSE),'descend');
         predNames_sorted = apt.predNames(idxA);
         idxPred = find(beta_sorted);
-        fprintf(fid,'RootMeanSquaredError = %s\n\n', sqrt(apt.stats(iY).MSE(apt.stats(iY).Index1SE)));
-        fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.stats(iY).Intercept(apt.stats(iY).Index1SE));
+        fprintf(fid,'RootMeanSquaredError = %s\n\n', sqrt(apt.stats(iY).MSE(idxMSE)));
+        fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.stats(iY).Intercept(idxMSE));
         fprintf(fid,'The %d contributing predictors, sorted with respect to effect size: \n \t\tPredictor\t Value\n',length(idxPred));
         
         for i = 1:length(idxPred)
