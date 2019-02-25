@@ -94,21 +94,29 @@ end
 % Shall we split spacer??
 if isfield(apt.config,'splitSequence') && apt.config.splitSequence
     for iseq = 1:length(apt.sequence)
-        tmpseq = flip(apt.sequence{iseq});
-        idxLL = regexp(tmpseq,tmpseq(1));
-        splitHere = find(idxLL ~= 1:length(idxLL));
-        if isempty(splitHere)
-            splitHere = length(idxLL)+1;
+        splitHere = nan;
+        spacerSplit = max(regexp(apt.sequence{iseq},['[^' apt.sequence{iseq}(end) ']']));
+        if isfield(apt.config,'knownSequences') % use prior info
+            for ikn = 1:length(apt.config.knownSequences)
+                if nwalign(apt.sequence{iseq}(1:spacerSplit),apt.config.knownSequences{ikn}) > 22
+                    splitHere = length(apt.config.knownSequences{ikn});
+                    apt.spacer{iseq} = apt.sequence{iseq}((splitHere+1):end);
+                    apt.sequence{iseq} = apt.sequence{iseq}(1:splitHere);
+                    break
+                end
+            end
         end
-        splitHere = splitHere(1);
-        if splitHere > 3
-            apt.sequence{iseq} = flip(tmpseq(splitHere:length(tmpseq)));
-            apt.spacer{iseq} = flip(tmpseq(1:(splitHere-1)));
-        else
-            apt.spacer{iseq} = '';
+        if isnan(splitHere) % try to find splitting position without prior information
+            if (length(apt.sequence) - spacerSplit) > 3
+                apt.spacer{iseq} = apt.sequence{iseq}((spacerSplit+1):end);
+                apt.sequence{iseq} = apt.sequence{iseq}(1:spacerSplit);
+            else
+                apt.spacer{iseq} = '';
+            end
         end
     end
 end
+
 
 % Do test about log10-distributed errors
 if isfield(apt, 'weightsY')
