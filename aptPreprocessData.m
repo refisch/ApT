@@ -96,18 +96,32 @@ if isfield(apt.config,'splitSequence') && apt.config.splitSequence
     for iseq = 1:length(apt.sequence)
         splitHere = nan;
         spacerSplit = max(regexp(apt.sequence{iseq},['[^' apt.sequence{iseq}(end) ']']));
-        if isfield(apt.config,'knownSequences') % use prior info
-            for ikn = 1:length(apt.config.knownSequences)
-                if nwalign(apt.sequence{iseq}(1:spacerSplit),apt.config.knownSequences{ikn}) > 22
-                    splitHere = length(apt.config.knownSequences{ikn});
-                    apt.spacer{iseq} = apt.sequence{iseq}((splitHere+1):end);
-                    apt.sequence{iseq} = apt.sequence{iseq}(1:splitHere);
-                    break
+        % use prior info
+        if isfield(apt.config,'knownSequences') 
+            % both sequences in it?
+            if ~(isempty(strfind(apt.sequence{iseq},apt.config.knownSequences{1})) || isempty(strfind(apt.sequence{iseq},apt.config.knownSequences{2})))
+                if ~(isempty(strfind(apt.sequence{iseq}(1:spacerSplit),apt.config.knownSequences{1})) || isempty(strfind(apt.sequence{iseq}(1:spacerSplit),apt.config.knownSequences{2})))
+                    splitHere = spacerSplit;
+                else
+                    splitHere = length(apt.sequence{iseq});
+                end
+                apt.spacer{iseq} = apt.sequence{iseq}((splitHere+1):end);
+                apt.sequence{iseq} = apt.sequence{iseq}(1:splitHere);
+            % one sequence only
+            else
+                for ikn = 1:length(apt.config.knownSequences)
+                    if nwalign(apt.sequence{iseq}(1:spacerSplit),apt.config.knownSequences{ikn}) > (length(apt.config.knownSequences{ikn}) * 1.5)
+                        splitHere = length(apt.config.knownSequences{ikn});
+                        apt.spacer{iseq} = apt.sequence{iseq}((splitHere+1):end);
+                        apt.sequence{iseq} = apt.sequence{iseq}(1:splitHere);
+                        break
+                    end
                 end
             end
         end
+        % without prior info
         if isnan(splitHere) % try to find splitting position without prior information
-            if (length(apt.sequence) - spacerSplit) > 3
+            if (length(apt.sequence) - spacerSplit) > 2
                 apt.spacer{iseq} = apt.sequence{iseq}((spacerSplit+1):end);
                 apt.sequence{iseq} = apt.sequence{iseq}(1:spacerSplit);
             else
@@ -117,6 +131,16 @@ if isfield(apt.config,'splitSequence') && apt.config.splitSequence
     end
 end
 
+% Test about spacer
+for i = 1:length(apt.spacer)
+    counter = 0 ;
+    if length(unique(apt.spacer{i})) > 1
+        counter = counter + 1;
+    end
+end
+if counter > 3
+    warning('There are at least three sequences not correctly separated from spacer. Check this!')
+end
 
 % Do test about log10-distributed errors
 if isfield(apt, 'weightsY')

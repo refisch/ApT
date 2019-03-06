@@ -55,34 +55,33 @@ if isfield(apt.config,'doZscoreModel') && apt.config.doZscoreModel
 end
 
 % Scale Model?
-if isfield(apt.config,'doScaleModel') && apt.config.doScaleModel
-    for i = 1:size(apt.predX,1)
-        if ~validationMode
+if ~validationMode
+    if isfield(apt.config,'doScaleModel') && apt.config.doScaleModel
+        for i = 1:size(apt.predX,1)
             apt.NormalizeModel(i) = max(apt.predX(i,:));
+            apt.predX(i,:) = apt.predX(i,:) / apt.NormalizeModel(i);
         end
-        apt.predX(i,:) = apt.predX(i,:)/apt.NormalizeModel(i);
     end
-end
-
-% shrink and reset predX if in validation mode.
-if validationMode
-    predXvali = nan(size(truePredX,1),size(apt.predX,2));
-    fillI = 0;
+else % shrink and reset predX if in validation mode.
+    predXvali = zeros(size(truePredX,1),size(apt.predX,2)); % is this correct procedure??
     for i = 1:length(truePredNames)
         idxmatch = find(strcmp(apt.predNames,truePredNames(i)));
         if ~isempty(idxmatch)
-            fillI = fillI+1;
-            predXvali(fillI,:) = apt.predX(idxmatch,:);
+            if isfield(apt.config,'doScaleModel') && apt.config.doScaleModel
+                predXvali(i,:) = apt.predX(idxmatch,:)/apt.NormalizeModel(i);
+            else
+                predXvali(i,:) = apt.predX(idxmatch,:);
+            end
         end
     end
-    apt.vali.predNames = truePredNames;
+    apt.vali.predNames = apt.predNames;
     apt.vali.predX = predXvali;
-    
     
     apt.predNames = truePredNames;
     apt.predX = truePredX;
     apt.sequence = sequenceTrue;
     apt.spacer = spacerTrue;
+    
 end
 
 end

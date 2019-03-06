@@ -9,8 +9,16 @@ if isfield(apt.pred,'Length')
         for i = 1:length(apt.sequence)
             lengthSeq(i) = length(apt.sequence{i});
         end
-        apt.predNames{end+1} = 'length';
+        apt.predNames{end+1} = 'length_sequence';
         apt.predX = [apt.predX; lengthSeq];
+        if isfield(apt,'spacer')
+            lengthSpacer = [];
+            for i = 1:length(apt.spacer)
+                lengthSpacer(i) = length(apt.spacer{i});
+            end
+            apt.predNames{end+1} = 'length_spacer';
+            apt.predX = [apt.predX; lengthSpacer];
+        end
     end
 end
 end

@@ -23,7 +23,7 @@ XlengthSeq = zeros(length(apt.sequence),length(predLengthTail));
 for iseq = 1:length(apt.sequence)
     if isfield(apt,'spacer')
         if isempty(apt.spacer{iseq})
-            XlengthSeq(iseq,:) = zeros(size(whichNC));
+            XlengthSeq(iseq,:) = zeros(size(predLengthTail));
         else
             whichNC = strcmp(predLengthTail,apt.spacer{iseq}(1));
             XlengthSeq(iseq,:) = length(apt.spacer{iseq})* whichNC;
