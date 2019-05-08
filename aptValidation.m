@@ -11,14 +11,14 @@ if (~isfield(apt,'vali') || ~isfield(apt.vali,'number'))
 end
 
 if ~isfield(apt.vali,'mode')
-    apt.vali.mode = 'random';
+    apt.vali.mode = 'best_seq';
 end
 
 aptGenerateValiSequence;
 
 aptPredictors(true);
 
-if ~all(size(apt.vali.predNames)==size(apt.predNames)) || ~all(strcmp(apt.vali.predNames, apt.predNames))
+if ~all(size(apt.vali.truePredNames)==size(apt.predNames))
     warning('Something went wrong!')
 end
 

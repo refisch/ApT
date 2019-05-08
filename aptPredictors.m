@@ -18,10 +18,8 @@ aptSetPredsFullAnalysis
 
 %% Calculate design matrix X
 if validationMode
-    truePredNames = apt.predNames;
-    truePredX = apt.predX;
-    sequenceTrue = apt.sequence;
-    spacerTrue = apt.spacer;
+    apt.vali.truePredNames = apt.predNames;
+    apt.vali.truePredX = apt.predX;
     apt.sequence = apt.vali.generatedSequence;
     apt.spacer = apt.vali.generatedSpacer;
 end
@@ -43,46 +41,8 @@ aptIncludeSymmetry;
 aptIncludeSimplifiedSequence;
 aptIncludePredInteractionTerms;
 
-% Eliminate those predictors where there is no information
-removePreds = sum(abs(apt.predX),2) == 0;
-apt.predX = apt.predX(~removePreds,:);
-apt.predNames = apt.predNames(~removePreds);
+aptRefinePredictors(validationMode)
 
-% Zscore on predictor level -- What about validation mode???
-if isfield(apt.config,'doZscoreModel') && apt.config.doZscoreModel
-    [apt.predX, apt.zscore.XMu, apt.zscore.XStd] = zscore(apt.predX');
-    apt.predX = apt.predX'; apt.zscore.XMu = apt.zscore.XMu'; apt.zscore.XStd = apt.zscore.XStd';
-end
-
-% Scale Model?
-if ~validationMode
-    if isfield(apt.config,'doScaleModel') && apt.config.doScaleModel
-        for i = 1:size(apt.predX,1)
-            apt.NormalizeModel(i) = max(apt.predX(i,:));
-            apt.predX(i,:) = apt.predX(i,:) / apt.NormalizeModel(i);
-        end
-    end
-else % shrink and reset predX if in validation mode.
-    predXvali = zeros(size(truePredX,1),size(apt.predX,2)); % is this correct procedure??
-    for i = 1:length(truePredNames)
-        idxmatch = find(strcmp(apt.predNames,truePredNames(i)));
-        if ~isempty(idxmatch)
-            if isfield(apt.config,'doScaleModel') && apt.config.doScaleModel
-                predXvali(i,:) = apt.predX(idxmatch,:)/apt.NormalizeModel(i);
-            else
-                predXvali(i,:) = apt.predX(idxmatch,:);
-            end
-        end
-    end
-    apt.vali.predNames = apt.predNames;
-    apt.vali.predX = predXvali;
-    
-    apt.predNames = truePredNames;
-    apt.predX = truePredX;
-    apt.sequence = sequenceTrue;
-    apt.spacer = spacerTrue;
-    
-end
 
 end
 

@@ -21,15 +21,15 @@ if isfield(apt.pred,'DataPredictors') && ~isempty(apt.pred.DataPredictors)
                 dataPred = [dataPred; 1];
             end
         else
-        for iX = 1:length(predNames)
-            idxX = find(~cellfun(@isempty,strfind(apt.data(1).predName,predNames{iX})));
-            dataPred = [];
-            for id = 1:length(apt.data)
-                dataPred = [dataPred; apt.data(id).X{idxX}];
+            for iX = 1:length(predNames)
+                idxX = find(~cellfun(@isempty,strfind(apt.data(1).predName,predNames{iX})));
+                dataPred = [];
+                for id = 1:length(apt.data)
+                    dataPred = [dataPred; apt.data(id).X{idxX}];
+                end
+                apt.predNames{end+1} = ['Data_' predNames{iX}];
+                apt.predX = [apt.predX; dataPred'];
             end
-        end
-        apt.predNames{end+1} = ['Data_' predNames{iX}];
-        apt.predX = [apt.predX; dataPred'];
         end
         
     end

@@ -85,32 +85,35 @@ switch apt.vali.mode
             end
         end
         
-        case 'best_seq' % This mode randomly alters best performing sequences
-            % number of best performer for each observable
-            if isfield(apt.config,'fitReplicates') && apt.config.fitReplicates == true
-                nMax = 10; 
+    case 'best_seq' % This mode randomly alters best performing sequences
+        % number of best performer for each observable
+        if isfield(apt.config,'fitReplicates') && apt.config.fitReplicates == true
+            nMax = 10;
+        else
+            nMax = 100;
+        end
+        generatedSequence = cell(1,apt.vali.number);
+        generatedSpacer = cell(1,apt.vali.number);
+        numIter = floor(apt.vali.number /(nMax * length(apt.Y)));
+        iterCounter = 0;
+        if ~isfield(apt,'Yfit1SE') || ~isfield(apt,'YfitMinSE')
+            aptCompareFitVsTrue(false); % Get Estimates based on model.
+        end
+        for ivar = 1:length(apt.Y)
+            if strcmp(apt.config.useLassoFit,'best')
+                [~,idxMax] = maxk(apt.YfitMinSE{ivar},nMax);
             else
-                nMax = 100;
+                [~,idxMax] = maxk(apt.Yfit1SE{ivar},nMax);
             end
-            generatedSequence = cell(1,apt.vali.number);
-            generatedSpacer = cell(1,apt.vali.number);
-            numIter = floor(apt.vali.number /(nMax * length(apt.Y)));
-            iterCounter = 0;
-            for ivar = 1:length(apt.Y)
-                if strcmp(apt.config.useLassoFit,'best')
-                    [~,idxMax] = maxk(apt.YfitMinSE{ivar},nMax);
-                else
-                    [~,idxMax] = maxk(apt.Yfit1SE{ivar},nMax);
+            for iSeq = 1:length(idxMax)
+                posSeq = ((numIter*(iterCounter)):(numIter*(iterCounter+1)))+1;
+                for iPos = 1:length(posSeq)
+                    generatedSequence{posSeq(iPos)} = apt.sequence{idxMax(iSeq)};
+                    generatedSpacer{posSeq(iPos)} = apt.spacer{idxMax(iSeq)};
                 end
-                for iSeq = 1:length(idxMax)
-                    posSeq = ((numIter*(iterCounter)):(numIter*(iterCounter+1)))+1;
-                    for iPos = 1:length(posSeq)
-                        generatedSequence{posSeq(iPos)} = apt.sequence{idxMax(iSeq)};
-                        generatedSpacer{posSeq(iPos)} = apt.spacer{idxMax(iSeq)};
-                    end
-                    iterCounter = iterCounter+1;
-                end
+                iterCounter = iterCounter+1;
             end
+        end
         
         for iSeq = 1:apt.vali.number
             Pert = poissrnd(length(generatedSequence{iSeq})/6,1,1);% Poissonian random number. - number of alterations
@@ -123,6 +126,7 @@ switch apt.vali.mode
                 end
             end
         end
+        
         idxEmpty = cellfun(@isempty,generatedSequence);
         generatedSequence = generatedSequence(~idxEmpty);
     case 'manually'
@@ -130,16 +134,19 @@ switch apt.vali.mode
             generatedSequence = apt.vali.manualSequences;
             generatedSpacer =  apt.vali.manualSpacer;
         else
-            error('Pleasy specify youlr manual Sequences in the fields apt.vali.manualSequences')
+            error('Pleasy specify your manually chosen sequences in the fields apt.vali.manualSequences')
         end
 end
 
+% Use default spacer instead??
+if isfield(apt.vali,'useOnlySequence') && apt.vali.useOnlySequence
+    generatedSpacer(:) = {'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'};
+end
+        
 % Reduce computational effort as there is no noise in prediction.
 [~,idxuni] = unique(strcat(generatedSequence,generatedSpacer));
 
 apt.vali.generatedSequence = generatedSequence(idxuni);
 apt.vali.generatedSpacer = generatedSpacer(idxuni);
-
-
 
 end

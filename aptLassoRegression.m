@@ -21,7 +21,6 @@ for iY = 1:length(apt.data(1).obsName)
     stats.name = 'LassoRegression';
     stats.nfoldCV = nfoldCV;
     apt.stats(iY) = stats;
-    clear stats;
     
 %     tic
 %     zscor_xnan = @(x) bsxfun(@rdivide, bsxfun(@minus, x, mean(x,'omitnan')), std(x, 'omitnan')); %NaN handling

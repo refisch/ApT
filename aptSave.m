@@ -18,6 +18,7 @@ if ~isdir(folderName)
     mkdir(folderName);
 end
 cd(wd)
+apt.savepath = pathtofolder;
 save([pathtofolder '/workspace.mat'],'apt')
 
 copyfile('Results.txt', pathtofolder)
@@ -36,5 +37,6 @@ if saveFigures
         print(FigHandle,fullfile(FolderName, FigName),'-dpng','-r300')
     end
 end
+
 end
 

@@ -28,7 +28,7 @@ end
 
 for iY = 1:length(apt.Y)
     if apt.config.doLog10(iY)
-        digits = '5';
+        digits = '6';
     else
         digits = '3';
     end
@@ -45,9 +45,9 @@ for iY = 1:length(apt.Y)
         idxPred = find(beta_sorted);
         fprintf(fid,'RootMeanSquaredError = %s\n', sqrt(apt.rankstats(iY).MSE(idxMSE)));
         fprintf(fid,['Intercept:\t\t\t\t%.' digits 'f\n'],apt.rankstats(iY).Intercept(idxMSE));
-        fprintf(fid,'The %d contributing predictors, sorted with respect to effect size: \n \t\tPredictor\t Value\n',length(idxPred));
+        fprintf(fid,'The %d contributing predictors according to L1 penalization, sorted with respect to effect size: \n %35s \t Value\n',length(idxPred),'Predictor');
         for i = 1:length(idxPred)
-            fprintf(fid,['%23s\t\t\t%.' digits 'f\n'],predNames_sorted{idxPred(i)},beta_sorted(idxPred(i)));
+            fprintf(fid,['%35s\t%.' digits 'f\n'],predNames_sorted{idxPred(i)},beta_sorted(idxPred(i)));
         end
     else
         if isfield(apt.config,'useLassoFit') && strcmp(apt.config.useLassoFit,'best')

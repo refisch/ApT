@@ -8,6 +8,8 @@ end
 
 global apt
 
+% This does not work (yet) when removing nans from data.
+
 if isfield(apt.pred,'ExpCond') && apt.pred.ExpCond
     conc = [];
     arrayData = [];
