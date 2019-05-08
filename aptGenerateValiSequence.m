@@ -116,11 +116,31 @@ switch apt.vali.mode
         end
         
         for iSeq = 1:apt.vali.number
-            Pert = poissrnd(length(generatedSequence{iSeq})/6,1,1);% Poissonian random number. - number of alterations
+            Pert = poissrnd(length(generatedSequence{iSeq})/6,1,1);% Poissonian random number. - number of alterations from basic sequence
             idxShuffle = randperm(length(generatedSequence{iSeq}));
-            generatedSequence{iSeq}(idxShuffle(1:Pert)) = W{1}(ceil(rand(1,Pert)*4)); % completely random AGCT
+            generatedSequence{iSeq}(idxShuffle(1:Pert)) = W{1}(ceil(rand(1,Pert)*4)); % completely random AGCT at certain positions.
+            
+            % additional Insertions / Deletions
+            if rand(1) < 0.4 % insertion
+                splitpos = randi([0,length(generatedSequence{iSeq})]);
+                insertSeq = randsample('AGCT',poissrnd(2),true); % magic factor
+                if splitpos == 0
+                    generatedSequence{iSeq} = [insertSeq generatedSequence{iSeq}];
+                else
+                    generatedSequence{iSeq} = [generatedSequence{iSeq}(1:splitpos) insertSeq generatedSequence{iSeq}(splitpos:end)];
+                end
+            elseif rand(1)< 0.05 % deletion
+                splitpos = randi([0,length(generatedSequence{iSeq})]);
+                removeNumber = poissrnd(2);% magic factor
+                if (splitpos-removeNumber) < 1
+                    generatedSequence{iSeq} = generatedSequence{iSeq}((removeNumber+1):end);
+                else
+                    generatedSequence{iSeq} = [generatedSequence{iSeq}(1:(splitpos-removeNumber)) generatedSequence{iSeq}(splitpos:end)];
+                end
+            end
+            
             if ~isempty(generatedSpacer{iSeq})
-                if rand(1) < 0.1
+                if rand(1) < 0.05 % random number to determine whether to change spacer letter
                     currSpacer = generatedSpacer{iSeq};
                     generatedSpacer{iSeq} = strrep(generatedSpacer{iSeq},currSpacer(1),W{1}(ceil(rand(1)*4)));
                 end
@@ -140,11 +160,11 @@ end
 
 % Use default spacer instead??
 if isfield(apt.vali,'useOnlySequence') && apt.vali.useOnlySequence
-    generatedSpacer(:) = {'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'};
+    generatedSpacer(:) = {'TTTTTTTTTTTTTTTTTTTT'};
 end
         
 % Reduce computational effort as there is no noise in prediction.
-[~,idxuni] = unique(strcat(generatedSequence,generatedSpacer));
+[~,idxuni] = unique(strcat(generatedSequence,generatedSpacer),'stable');
 
 apt.vali.generatedSequence = generatedSequence(idxuni);
 apt.vali.generatedSpacer = generatedSpacer(idxuni);

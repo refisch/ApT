@@ -12,6 +12,10 @@ if ~exist('saveFigures','var')
     saveFigures = false;
 end
 wd = pwd;
+if ~isdir('Results')
+    mkdir('Results')
+end
+
 pathtofolder = [wd '/Results/' folderName];
 cd Results
 if ~isdir(folderName)
@@ -21,8 +25,9 @@ cd(wd)
 apt.savepath = pathtofolder;
 save([pathtofolder '/workspace.mat'],'apt')
 
-copyfile('Results.txt', pathtofolder)
-
+if isfile('Results.txt')
+    copyfile('Results.txt', pathtofolder)
+end
 % save figures
 if saveFigures
     FolderName = pathtofolder;   % Your destination folder
